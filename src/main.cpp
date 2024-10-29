@@ -557,7 +557,14 @@ static void UpdateCompatEnvVars()
 		if ( g_nXWaylandCount > 1 )
 		{
 			setenv( "STEAM_MULTIPLE_XWAYLANDS", "1", 0 );
-		}
+            for (int i = 1; i < g_nXWaylandCount; i++)
+            {
+                char env_name[64];
+                snprintf(env_name, sizeof(env_name), "STEAM_GAME_DISPLAY_%d", i - 1);
+                gamescope_xwayland_server_t *server = wlserver_get_xwayland_server(i);
+                setenv(env_name, server->get_nested_display_name(), 1);
+            }
+        }
 		// If the backend exposes tearing, expose that to Steam.
 		if ( GetBackend()->SupportsTearing() )
 		{
